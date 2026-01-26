@@ -3,15 +3,15 @@
 import { motion } from "framer-motion";
 import {
     BookOpen,
-    Users,
     MapPin,
     FileText,
     MessageSquare,
-    School,
     ArrowRight,
-    ChevronRight
+    ChevronRight,
+    School
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const Reveal = ({ children }: { children: React.ReactNode }) => (
     <motion.div
@@ -31,24 +31,31 @@ const SectionTitle = ({ title, subtitle }: { title: string, subtitle?: string })
     </div>
 );
 
-const Card = ({ icon: Icon, title, content, tags, color = "accent" }: any) => (
-    <div className="glass-card p-6 rounded-2xl h-full flex flex-col">
-        <div className={`w-12 h-12 rounded-xl bg-${color}/10 flex items-center justify-center mb-6`}>
-            <Icon className={`w-6 h-6 text-${color}`} />
+const Card = ({ icon: Icon, title, content, tags, color = "accent", href }: any) => {
+    const CardContent = (
+        <div className="glass-card p-6 rounded-2xl h-full flex flex-col cursor-pointer group">
+            <div className={`w-12 h-12 rounded-xl bg-${color === "accent" ? 'accent/10' : 'blue-400/10'} flex items-center justify-center mb-6`}>
+                <Icon className={`w-6 h-6 ${color === "accent" ? 'text-accent' : 'text-blue-400'}`} />
+            </div>
+            <h3 className="text-xl font-bold mb-4 font-outfit group-hover:text-accent transition-colors flex items-center gap-2">
+                {title}
+                <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />
+            </h3>
+            <div className="text-neutral-400 text-sm leading-relaxed mb-6 flex-grow whitespace-pre-wrap">
+                {content}
+            </div>
+            <div className="flex flex-wrap gap-2">
+                {tags.map((tag: string) => (
+                    <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-xs text-neutral-300">
+                        {tag}
+                    </span>
+                ))}
+            </div>
         </div>
-        <h3 className="text-xl font-bold mb-4 font-outfit">{title}</h3>
-        <div className="text-neutral-400 text-sm leading-relaxed mb-6 flex-grow whitespace-pre-wrap">
-            {content}
-        </div>
-        <div className="flex flex-wrap gap-2">
-            {tags.map((tag: string) => (
-                <span key={tag} className="px-3 py-1 bg-white/5 rounded-full text-xs text-neutral-300">
-                    {tag}
-                </span>
-            ))}
-        </div>
-    </div>
-);
+    );
+
+    return href ? <Link href={href}>{CardContent}</Link> : CardContent;
+};
 
 export default function Home() {
     const [mounted, setMounted] = useState(false);
@@ -62,7 +69,7 @@ export default function Home() {
     return (
         <main className="relative">
             {/* Hero Section */}
-            <section className="relative min-height-[90vh] flex items-center justify-center pt-20 pb-32 px-6 overflow-hidden">
+            <section className="relative min-h-[90vh] flex items-center justify-center pt-20 pb-32 px-6 overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[128px] animate-pulse" />
                     <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-[128px]" />
@@ -88,13 +95,17 @@ export default function Home() {
                             膨大な過去問データと最新の傾向に基づいた、あなただけの合格戦略ガイド。
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 justify-center">
-                            <button className="btn-primary group">
-                                対策ガイドを開始する
-                                <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </button>
-                            <button className="px-6 py-3 rounded-full glass font-bold hover:bg-white/10 transition-all">
-                                過去の出題傾向を見る
-                            </button>
+                            <Link href="/academic">
+                                <button className="btn-primary group w-full md:w-auto">
+                                    対策ガイドを開始する
+                                    <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </Link>
+                            <Link href="/essay">
+                                <button className="px-6 py-3 rounded-full glass font-bold hover:bg-white/10 transition-all w-full md:w-auto">
+                                    過去の出題傾向を見る
+                                </button>
+                            </Link>
                         </div>
                     </motion.div>
                 </div>
@@ -117,6 +128,7 @@ export default function Home() {
                                 title="福岡県"
                                 content="【専門試験】倫理・政経のバランスが重要。特に人権教育に関する設問が頻出。\n【面接】不祥事防止と人権感覚、高い倫理観が問われる。"
                                 tags={["記述式あり", "人権重視", "模擬授業10分"]}
+                                href="/fukuoka"
                             />
                         </Reveal>
                         <Reveal>
@@ -125,6 +137,7 @@ export default function Home() {
                                 title="大分県"
                                 content="【論作文】社会課題（AI・環境等）への教育的視点が問われる。\n【面接】自己紹介書を深掘り。教師としての強みと弱みを言語化せよ。"
                                 tags={["1000字小論文", "場面指導あり", "4人面接官"]}
+                                href="/oita"
                             />
                         </Reveal>
                         <Reveal>
@@ -133,6 +146,7 @@ export default function Home() {
                                 title="長崎県"
                                 content="【教育施策】「ふるさと教育」「平和教育」の理解が不可欠。\n【専門】共通テスト6割レベルの基礎力を確実に。\n【面接】離島勤務への覚悟と意欲。"
                                 tags={["平和教育必須", "専門基礎重視", "30分個人面接"]}
+                                href="/nagasaki"
                             />
                         </Reveal>
                         <Reveal>
@@ -141,6 +155,7 @@ export default function Home() {
                                 title="佐賀県"
                                 content="【論文】佐賀県独自の教育キーワード（ICT・誇り等）を盛り込む。\n【専門】択一式スピード勝負。\n【面接】「現場での信頼性」と人柄を最重視。"
                                 tags={["ICT教育", "独自ワード", "スピード感"]}
+                                href="/saga"
                             />
                         </Reveal>
                     </div>
@@ -160,7 +175,7 @@ export default function Home() {
                                     福岡市が掲げる「5つのあるべき教員像」に基づき、特別支援教育の高度な専門性と情熱を評価します。\n
                                     併願制度の導入や奨学金返還支援など、志願者へのサポートも手厚い自治体です。
                                 </p>
-                                <div className="space-y-4">
+                                <div className="space-y-4 mb-8">
                                     {[
                                         "個別の教育支援計画・指導計画の作成力",
                                         "行動問題の機能分析と肯定的介入",
@@ -175,6 +190,12 @@ export default function Home() {
                                         </div>
                                     ))}
                                 </div>
+                                <Link href="/fukuoka-city-special-needs">
+                                    <button className="px-6 py-3 rounded-xl bg-blue-500/10 text-blue-400 font-bold hover:bg-blue-500/20 transition-all inline-flex items-center gap-2">
+                                        特別支援対策の詳細を見る
+                                        <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                </Link>
                             </div>
                         </Reveal>
                         <Reveal>
@@ -185,6 +206,7 @@ export default function Home() {
                                     content="特別支援教育の基礎理論に加え、小学部全教科の基礎知識が問われる。"
                                     tags={["教科専門", "特別支援専門"]}
                                     color="blue-400"
+                                    href="/academic"
                                 />
                                 <Card
                                     icon={FileText}
@@ -192,6 +214,7 @@ export default function Home() {
                                     content="「本市のあるべき教員像」を軸に、現場での実践例を交えて論述。"
                                     tags={["配点100点", "実践重視"]}
                                     color="blue-400"
+                                    href="/essay"
                                 />
                             </div>
                         </Reveal>
@@ -211,37 +234,37 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <Reveal>
-                            <div className="text-center group cursor-pointer">
+                            <Link href="/essay" className="text-center group cursor-pointer block">
                                 <div className="w-16 h-16 mx-auto bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent/10 transition-colors">
                                     <FileText className="w-8 h-8 text-neutral-400 group-hover:text-accent" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3">論作文・小論文</h3>
+                                <h3 className="text-xl font-bold mb-3 group-hover:text-accent transition-colors">論作文・小論文</h3>
                                 <p className="text-sm text-neutral-400 leading-relaxed">
                                     自治体の教育施策を反映させた「合格する構成案」を作成。キーワードの埋め込み方を伝授。
                                 </p>
-                            </div>
+                            </Link>
                         </Reveal>
                         <Reveal>
-                            <div className="text-center group cursor-pointer">
+                            <Link href="/interview" className="text-center group cursor-pointer block">
                                 <div className="w-16 h-16 mx-auto bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent/10 transition-colors">
                                     <MessageSquare className="w-8 h-8 text-neutral-400 group-hover:text-accent" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3">面接・模擬授業</h3>
+                                <h3 className="text-xl font-bold mb-3 group-hover:text-accent transition-colors">面接・模擬授業</h3>
                                 <p className="text-sm text-neutral-400 leading-relaxed">
                                     想定質問に対する「自分ならでは」の回答作成。場面指導での具体的な声掛けパターンを網羅。
                                 </p>
-                            </div>
+                            </Link>
                         </Reveal>
                         <Reveal>
-                            <div className="text-center group cursor-pointer">
+                            <Link href="/academic" className="text-center group cursor-pointer block">
                                 <div className="w-16 h-16 mx-auto bg-white/5 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-accent/10 transition-colors">
                                     <BookOpen className="w-8 h-8 text-neutral-400 group-hover:text-accent" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3">専門・教職教養</h3>
+                                <h3 className="text-xl font-bold mb-3 group-hover:text-accent transition-colors">専門・教職教養</h3>
                                 <p className="text-sm text-neutral-400 leading-relaxed">
                                     過去5年の出題傾向を分析した「出る順」重要トピックの抽出。効率的なインプットを実現。
                                 </p>
-                            </div>
+                            </Link>
                         </Reveal>
                     </div>
                 </div>
@@ -256,9 +279,11 @@ export default function Home() {
                         <p className="text-lg text-neutral-400 max-w-2xl mx-auto mb-12">
                             最新の試験情報や、合格者の体験談に基づいた資料を随時更新。九州での教職生活を、私たちと共に。
                         </p>
-                        <button className="btn-primary">
-                            今すぐ学習を開始する
-                        </button>
+                        <Link href="/academic">
+                            <button className="btn-primary">
+                                今すぐ学習を開始する
+                            </button>
+                        </Link>
                     </Reveal>
                 </div>
             </section>
